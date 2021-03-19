@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import time
 
 
 ap = argparse.ArgumentParser()
@@ -19,8 +20,10 @@ for imagePath in paths.list_images(args["images"]):
     orig = image.copy()
 
 # detect people in the image
+    start = time.time()
     (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4),
                                             padding=(8, 8), scale=1.05)
+    end = time.time()
     # draw the original bounding boxes
     for (x, y, w, h) in rects:
         cv2.rectangle(orig, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -39,4 +42,5 @@ for imagePath in paths.list_images(args["images"]):
     # show the output images
     cv2.imshow("Before NMS", orig)
     cv2.imshow("After NMS", image)
+    print(end - start)
     cv2.waitKey(0)
