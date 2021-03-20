@@ -1,77 +1,31 @@
 import os
 import sys
 import pickle       # see if useful
-
 import numpy as np
 import cv2
 
-
-DATASET_DIR = "./dataset"
-
-RUNNING_DIR = os.path.join(DATASET_DIR, "running")
-CYCLING_DIR = os.path.join(DATASET_DIR, "cycling")
-SITTING_DIR = os.path.join(DATASET_DIR, "sitting")
-WALKING_DIR = os.path.join(DATASET_DIR, "walking")
-# walking should the default classifier, but creating the folder here just in case
+import constants
+import video_interpreter as vi
+import to_nodes
 
 
-# TODO: ask if important two different folders for training and testing?
-def initialize_directories():
-    for folder in [RUNNING_DIR, CYCLING_DIR, SITTING_DIR, WALKING_DIR]:
-        if folder != "" and not os.path.exists(folder):
-            os.makedirs(folder)
+def load_coco():
+    # https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocoDemo.ipynb
+    # https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/coco.py
+    pass
 
 
-# code to open the webcam
-# TODO: time limit for the video capture
-def get_video_feed():
-    cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(0)
-    while True:
-        # Capture frame-by-frame
-        ret, frame = vc.read()
+def generate_ctm_dataset(activity):
+    # func to extract frames correctly here, should return either frames by frames
+    # or multiple frames in a convenient data format (more realistic) after a certain
+    # length of recording (e.g. 30 sec video)
 
-        # Our operations on the frame come here
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # nodes_extraceted = to_nodes.f2n(*frames)    # maybe map(to_nodes.f2n(), frames)??
 
-        # Display the resulting frame
-        cv2.imshow('frame', gray)
-        if (cv2.waitKey(1) & 0xFF == ord('q')):
-            break
-
-    # When everything done, release the capture
-    vc.release()
-    cv2.destroyWindow("preview")
-
-
-def save_video():
-    cap = cv2.VideoCapture(0)
-
-    # Define the codec and create VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
-
-    while(cap.isOpened()):
-        ret, frame = cap.read()
-        if ret==True:
-            frame = cv2.flip(frame, 0)
-
-            # write the flipped frame
-            out.write(frame)
-
-            cv2.imshow('frame', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        else:
-            break
-
-    # Release everything if job is finished
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-    return
+    # save in certain way node_extracted (maybe trough func)
+    pass
 
 
 if __name__ == '__main__':
-    initialize_directories()
+    constants.initialize_directories()
 
