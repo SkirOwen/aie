@@ -5,7 +5,6 @@ from time import monotonic as chrono
 
 
 # code to open the webcam
-# TODO: time limit for the video capture
 def get_video_feed():
     cv2.namedWindow("preview")
     vc = cv2.VideoCapture(0)
@@ -26,7 +25,7 @@ def get_video_feed():
     cv2.destroyWindow("preview")
 
 
-def save_video(time_limit):
+def save_video(time_limit=10):
     cap = cv2.VideoCapture(0)
 
     # Define the codec and create VideoWriter object
@@ -56,13 +55,17 @@ def save_video(time_limit):
     return
 
 
-def extract_frames(path_out, frame_rate=1):
+def extract_frames(path_out, frame_rate=1, time_limit=10):
     """
 
     Parameters
     ----------
-    frame_rate: int or float,
-                Extract the frame every "frame_rate" seconds
+    path_out: str,
+              path to save the frames
+    time_limit: float, optional
+                time to record in seconds, default 10
+    frame_rate: int or float, optional
+                Extract the frame every "frame_rate" seconds, default 1
 
     Returns
     -------
@@ -72,8 +75,10 @@ def extract_frames(path_out, frame_rate=1):
     vc = cv2.VideoCapture(0)
     success, image = vc.read()
     success = True
-    while success:
-        vc.set(cv2.CAP_PROP_POS_MSEC,(count * 1000))
+
+    end_time = chrono() + time_limit
+    while success or chrono() < end_time:
+        vc.set(cv2.CAP_PROP_POS_MSEC, (count * 1000))
         success, image = vc.read()
         cv2.imwrite(path_out + "/frame%d.jpg" % count, image)
         count += frame_rate
