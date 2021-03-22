@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+import time
+from time import monotonic as chrono
 
 
 # code to open the webcam
@@ -24,14 +26,16 @@ def get_video_feed():
     cv2.destroyWindow("preview")
 
 
-def save_video():
+def save_video(time_limit):
     cap = cv2.VideoCapture(0)
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
-    while cap.isOpened():
+    end_time = chrono() + time_limit
+
+    while cap.isOpened() or chrono() < end_time:
         ret, frame = cap.read()
         if ret:
             frame = cv2.flip(frame, 0)
@@ -73,3 +77,7 @@ def extract_frames(path_out, frame_rate=1):
         success, image = vc.read()
         cv2.imwrite(path_out + "/frame%d.jpg" % count, image)
         count += frame_rate
+
+
+if __name__ == '__main__':
+    pass
