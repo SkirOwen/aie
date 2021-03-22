@@ -2,10 +2,12 @@ import os
 
 DATASET_DIR = "./dataset"
 
-RUNNING_DIR = os.path.join(DATASET_DIR, "running")
-CYCLING_DIR = os.path.join(DATASET_DIR, "cycling")
-SITTING_DIR = os.path.join(DATASET_DIR, "sitting")
-WALKING_DIR = os.path.join(DATASET_DIR, "walking")
+TRAINING_DIR = os.path.join(DATASET_DIR, "training")
+
+RUNNING_DIR = os.path.join(TRAINING_DIR, "running")
+CYCLING_DIR = os.path.join(TRAINING_DIR, "cycling")
+SITTING_DIR = os.path.join(TRAINING_DIR, "sitting")
+WALKING_DIR = os.path.join(TRAINING_DIR, "walking")
 # walking should the default classifier, but creating the folder here just in case
 
 
