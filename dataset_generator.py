@@ -9,12 +9,6 @@ import video_interpreter as vi
 import to_nodes
 
 
-def load_coco():
-    # https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocoDemo.ipynb
-    # https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/coco.py
-    pass
-
-
 def generate_ctm_dataset(activity):
     # func to extract frames correctly here, should return either frames by frames
     # or multiple frames in a convenient data format (more realistic) after a certain
