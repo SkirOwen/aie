@@ -34,7 +34,7 @@ def save_video(time_limit=10):
 
     end_time = chrono() + time_limit
 
-    while cap.isOpened() or chrono() < end_time:
+    while cap.isOpened() and chrono() < end_time:
         ret, frame = cap.read()
         if ret:
             out.write(frame)
@@ -74,7 +74,7 @@ def extract_frames(path_out, frame_rate=1, time_limit=10):
     success = True
 
     end_time = chrono() + time_limit
-    while success or chrono() < end_time:
+    while success and chrono() < end_time:
         vc.set(cv2.CAP_PROP_POS_MSEC, (count * 1000))
         success, image = vc.read()
         cv2.imwrite(path_out + "/frame%d.jpg" % count, image)
