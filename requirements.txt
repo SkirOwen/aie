@@ -2,3 +2,4 @@ argparse
 numpy
 scipy
 tqdm
+opencv-contrib-python
