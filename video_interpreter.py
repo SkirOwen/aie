@@ -37,9 +37,6 @@ def save_video(time_limit=10):
     while cap.isOpened() or chrono() < end_time:
         ret, frame = cap.read()
         if ret:
-            frame = cv2.flip(frame, 0)
-
-            # write the flipped frame
             out.write(frame)
 
             cv2.imshow('frame', frame)
