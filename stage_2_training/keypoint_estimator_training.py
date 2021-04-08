@@ -141,6 +141,6 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
 plt.grid()
-results_save_path = "./results.png"
+results_save_path = "./keypoint_estimator_loss.png"
 fig.savefig(results_save_path, dpi=192)
-print("Results saved to", )
+print("Results saved to", results_save_path)
