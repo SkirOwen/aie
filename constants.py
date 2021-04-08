@@ -1,5 +1,9 @@
 import os
 
+CAMERA_IP = "192.168.1.234"
+CAMERA_USER = "admin"
+CAMERA_PSWD = "camera"
+
 DATASET_DIR = "./dataset"
 
 TRAINING_DIR = os.path.join(DATASET_DIR, "training")
