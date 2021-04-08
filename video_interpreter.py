@@ -4,6 +4,8 @@ import time
 from time import monotonic as chrono
 from reolinkapi import Camera
 
+import threading
+
 from constants import *
 
 
@@ -84,18 +86,18 @@ def extract_frames(path_out, frame_rate=1, time_limit=10):
         count += frame_rate
 
 
-def non_blocking():
+def non_blocking(IP, name):
     print("calling non-blocking")
 
     def inner_callback(img):
-        cv2.imshow("name", maintain_aspect_ratio_resize(img, width=600))
+        cv2.imshow(name, maintain_aspect_ratio_resize(img, width=600))
         print("got the image non-blocking")
         key = cv2.waitKey(1)
         if key == ord('q'):
             cv2.destroyAllWindows()
             exit(1)
 
-    c = Camera(CAMERA_IP, CAMERA_USER, CAMERA_PSWD)
+    c = Camera(IP, CAMERA_USER, CAMERA_PSWD)
     # t in this case is a thread
     t = c.open_video_stream(callback=inner_callback)
 
@@ -109,8 +111,8 @@ def non_blocking():
 
 
 # Reolink api
-def blocking():
-    c = Camera(CAMERA_IP, CAMERA_USER, CAMERA_PSWD)
+def blocking(IP, name):
+    c = Camera(IP, CAMERA_USER, CAMERA_PSWD)
     # stream in this case is a generator returning an image (in mat format)
     stream = c.open_video_stream()
 
@@ -126,7 +128,7 @@ def blocking():
 
     # or using a for loop
     for img in stream:
-        cv2.imshow("name", maintain_aspect_ratio_resize(img, width=600))
+        cv2.imshow(name, maintain_aspect_ratio_resize(img, width=600))
         # cv2.imshow("name", img)
         # print("got the image blocking")
         key = cv2.waitKey(1)
@@ -163,4 +165,18 @@ def maintain_aspect_ratio_resize(image, width=None, height=None, inter=cv2.INTER
 
 
 if __name__ == '__main__':
-    blocking()
+    # blocking(CAMERA_IP)
+    # blocking(CAMERA_IP_2)
+
+    threads = []
+
+    for i in range(3):
+        t = threading.Thread(target=non_blocking(CAMERA_IP_LST[i], "cam" + str(i+1)))
+        t.daemon = True
+        threads.append(t)
+
+    for i in range(3):
+        threads[i].start()
+
+    for i in range(3):
+        threads[i].join()
