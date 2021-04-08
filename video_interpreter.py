@@ -127,7 +127,8 @@ def blocking():
     # or using a for loop
     for img in stream:
         cv2.imshow("name", maintain_aspect_ratio_resize(img, width=600))
-        print("got the image blocking")
+        # cv2.imshow("name", img)
+        # print("got the image blocking")
         key = cv2.waitKey(1)
         if key == ord('q'):
             cv2.destroyAllWindows()
@@ -141,19 +142,21 @@ def maintain_aspect_ratio_resize(image, width=None, height=None, inter=cv2.INTER
     (h, w) = image.shape[:2]
 
     # Return original image if no need to resize
-    if width is None and height is None:
-        return image
+    # if width is None and height is None:
+    #     return image
 
     # We are resizing height if width is none
     if width is None:
+        if height is None:
+            return image
         # Calculate the ratio of the height and construct the dimensions
         r = height / float(h)
         dim = (int(w * r), height)
     # We are resizing width if height is none
-    else:
-        # Calculate the ratio of the 0idth and construct the dimensions
-        r = width / float(w)
-        dim = (width, int(h * r))
+    # else:
+    # Calculate the ratio of the 0idth and construct the dimensions
+    r = width / float(w)
+    dim = (width, int(h * r))
 
     # Return the resized image
     return cv2.resize(image, dim, interpolation=inter)
