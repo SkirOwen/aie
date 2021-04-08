@@ -82,4 +82,4 @@ def extract_frames(path_out, frame_rate=1, time_limit=10):
 
 
 if __name__ == '__main__':
-    pass
+    get_video_feed()

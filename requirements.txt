@@ -3,3 +3,4 @@ numpy
 scipy
 tqdm
 opencv-contrib-python
+'reaolinkapi[streaming]'
