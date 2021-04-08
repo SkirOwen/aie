@@ -1,6 +1,8 @@
 import os
 
 CAMERA_IP = "192.168.1.234"
+CAMERA_IP_2 = "192.168.1.241"
+CAMERA_IP_3 = "192.168.1.242"
 CAMERA_USER = "admin"
 CAMERA_PSWD = "camera"
 
