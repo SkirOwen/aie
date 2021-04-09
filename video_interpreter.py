@@ -178,5 +178,5 @@ if __name__ == '__main__':
     for i in range(3):
         threads[i].start()
 
-    for i in range(3):
-        threads[i].join()
+    # for i in range(3):
+    #     threads[i].join()
