@@ -15,7 +15,7 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 # enable mixed precision training
-keras.mixed_precision.set_global_policy('mixed_float16')
+# keras.mixed_precision.set_global_policy('mixed_float16')
 
 # enable XLA compilation (GPU or CPU)
 tf.config.optimizer.set_jit(True)
