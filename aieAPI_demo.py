@@ -63,10 +63,12 @@ def test_on_camera(link):
         if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
             break
         original_frame = cv2.cvtColor(original_frame, cv2.COLOR_BGR2RGB)
+        original_frame = cv2.resize(original_frame, (1500, 900))
         output_frame, _ = aie.detect(original_frame, show_bbox=False, show_skeleton=True, show_activity=True)
+        # output_frame = cv2.resize(output_frame, (1000, 800))
         _ = cv2.putText(output_frame, "FPS: %.1f" % fps, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1,
                         cv2.LINE_AA)
-        cv2.imshow('frame', cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR),  maintain_aspect_ratio_resize(output_frame, width=600))
+        cv2.imshow('frame', cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR))
         fps = 1. / (perf_counter() - tic)
     cap.release()
     cv2.destroyAllWindows()
