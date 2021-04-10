@@ -10,6 +10,8 @@ import sys
 import cv2
 import imutils
 
+from aieAPI.aieAPI import AIE, call_aie
+
 
 class CameraWidget(QtWidgets.QWidget):
     """Independent camera feed
@@ -18,7 +20,7 @@ class CameraWidget(QtWidgets.QWidget):
     @param width - Width of the video frame
     @param height - Height of the video frame
     @param stream_link - IP/RTSP/Webcam link
-    @param aspect_ratio - Whether to maintain frame aspect ratio or force into fraame
+    @param aspect_ratio - Whether to maintain frame aspect ratio or force into frame
     """
 
     def __init__(self, width, height, stream_link=0, aspect_ratio=False, parent=None, deque_size=1):
@@ -78,14 +80,17 @@ class CameraWidget(QtWidgets.QWidget):
 
     def get_frame(self):
         """Reads frame, resizes, and converts image to pixmap"""
-
+        fps = 0.
         while True:
             try:
                 if self.capture.isOpened() and self.online:
                     # Read next frame from stream and insert into deque
+                    tic = time.perf_counter()
                     status, frame = self.capture.read()
                     if status:
                         self.deque.append(frame)
+                        call_aie(frame, fps)
+                        fps = 1. / (time.perf_counter() - tic)
                     else:
                         self.capture.release()
                         self.online = False
@@ -146,6 +151,7 @@ def exit_application():
 
 
 if __name__ == '__main__':
+    aie = AIE()
 
     # Create main application window
     app = QtWidgets.QApplication([])

@@ -121,3 +121,10 @@ class AIE:
                                 cv2.LINE_AA)
 
         return output_image, activity_count
+
+
+def call_aie(original_frame, fps):
+    original_frame = cv2.cvtColor(original_frame, cv2.COLOR_BGR2RGB)
+    output_frame, _ = AIE.detect(original_frame, show_bbox=False, show_skeleton=True, show_activity=True)
+    _ = cv2.putText(output_frame, "FPS: %.1f" % fps, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1,
+                    cv2.LINE_AA)
