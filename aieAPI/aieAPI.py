@@ -129,3 +129,4 @@ def call_aie(original_frame, fps, aie):
     original_frame, _ = aie.detect(original_frame, show_bbox=False, show_skeleton=True, show_activity=True)
     _ = cv2.putText(original_frame, "FPS: %.1f" % fps, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1,
                     cv2.LINE_AA)
+    return original_frame

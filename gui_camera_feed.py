@@ -91,7 +91,7 @@ class CameraWidget(QtWidgets.QWidget):
                     tic = time.perf_counter()
                     status, frame = self.capture.read()
                     if status:
-                        call_aie(frame, fps, self.aie)
+                        frame = call_aie(frame, fps, self.aie)
                         fps = 1. / (time.perf_counter() - tic)
                         self.deque.append(frame)
 
@@ -140,7 +140,7 @@ class CameraWidget(QtWidgets.QWidget):
 
             # Convert to pixmap and set to video frame
             self.img = QtGui.QImage(self.frame, self.frame.shape[1], self.frame.shape[0],
-                                    QtGui.QImage.Format_RGB888).rgbSwapped()
+                                    QtGui.QImage.Format_RGB888)
             self.pix = QtGui.QPixmap.fromImage(self.img)
             self.video_frame.setPixmap(self.pix)
 
@@ -180,21 +180,21 @@ if __name__ == '__main__':
     password = 'Your camera password!'
 
     # Stream links
-    # camera0 = 'rtsp://admin:camera@192.168.1.234:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
-    camera1 = 'rtsp://admin:camera@192.168.1.241:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
-    # camera2 = 'rtsp://admin:camera@192.168.1.242:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
+    camera0 = 'rtsp://admin:camera@192.168.1.234:554/h264Preview_01_sub'.format(CAMERA_USER, CAMERA_PSWD)
+    camera1 = 'rtsp://admin:camera@192.168.1.241:554/h264Preview_01_sub'.format(CAMERA_USER, CAMERA_PSWD)
+    camera2 = 'rtsp://admin:camera@192.168.1.242:554/h264Preview_01_sub'.format(CAMERA_USER, CAMERA_PSWD)
 
     # Create camera widgets
     print('Creating Camera Widgets...')
-    # zero = CameraWidget(screen_width // 3, screen_height // 3, camera0)
+    zero = CameraWidget(screen_width // 3, screen_height // 3, camera0)
     one = CameraWidget(screen_width // 3, screen_height // 3, camera1)
-    # two = CameraWidget(screen_width // 3, screen_height // 3, camera2)
+    two = CameraWidget(screen_width // 3, screen_height // 3, camera2)
 
     # Add widgets to layout
     print('Adding widgets to layout...')
-    # ml.addWidget(zero.get_video_frame(), 0, 0, 1, 1)
+    ml.addWidget(zero.get_video_frame(), 0, 0, 1, 1)
     ml.addWidget(one.get_video_frame(), 0, 1, 1, 1)
-    # ml.addWidget(two.get_video_frame(), 0, 2, 1, 1)
+    ml.addWidget(two.get_video_frame(), 0, 2, 1, 1)
     # ml.addWidget(three.get_video_frame(),1,0,1,1)
     # ml.addWidget(four.get_video_frame(),1,1,1,1)
     # ml.addWidget(five.get_video_frame(),1,2,1,1)
