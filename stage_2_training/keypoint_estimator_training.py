@@ -30,9 +30,9 @@ sota = keras.applications.MobileNetV2(
     include_top=False,
     pooling='avg',
     weights=None)
-
+dp = layers.Dropout(0.5)(sota.output)
 NAME = 'keypoint_estimator'
-regression = layers.Dense(26, dtype=tf.float32, name="regression")(sota.output)
+regression = layers.Dense(26, dtype=tf.float32, name="regression")(dp)
 model_keypoint_estimator = keras.Model(sota.input, regression, name=NAME)
 
 
