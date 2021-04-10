@@ -1,10 +1,10 @@
 argparse
-numpy~=1.19.5
+numpy
 scipy
 tqdm
 opencv-contrib-python
 "reaolinkapi[streaming]"
 adabelief-tf
-opencv-python~=4.5.1.48
-tensorflow~=2.4.1
-matplotlib~=3.4.1
+opencv-contrib-python
+tensorflow
+matplotlib
