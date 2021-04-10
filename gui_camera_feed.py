@@ -80,6 +80,7 @@ class CameraWidget(QtWidgets.QWidget):
 
     def get_frame(self):
         """Reads frame, resizes, and converts image to pixmap"""
+        aie = AIE()
         fps = 0.
         while True:
             try:
@@ -89,7 +90,7 @@ class CameraWidget(QtWidgets.QWidget):
                     status, frame = self.capture.read()
                     if status:
                         self.deque.append(frame)
-                        call_aie(frame, fps)
+                        call_aie(frame, fps, aie)
                         fps = 1. / (time.perf_counter() - tic)
                     else:
                         self.capture.release()
@@ -151,7 +152,7 @@ def exit_application():
 
 
 if __name__ == '__main__':
-    aie = AIE()
+    # aie = AIE()
 
     # Create main application window
     app = QtWidgets.QApplication([])
