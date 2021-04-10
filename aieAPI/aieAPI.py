@@ -125,6 +125,7 @@ class AIE:
 
 def call_aie(original_frame, fps, aie):
     original_frame = cv2.cvtColor(original_frame, cv2.COLOR_BGR2RGB)
+    # original_frame = cv2.resize(original_frame, (1100, 700))
     original_frame, _ = aie.detect(original_frame, show_bbox=False, show_skeleton=True, show_activity=True)
     _ = cv2.putText(original_frame, "FPS: %.1f" % fps, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1,
                     cv2.LINE_AA)

@@ -26,6 +26,8 @@ class CameraWidget(QtWidgets.QWidget):
     def __init__(self, width, height, stream_link=0, aspect_ratio=False, parent=None, deque_size=1):
         super(CameraWidget, self).__init__(parent)
 
+        self.aie = AIE()
+
         # Initialize deque used to store frames read from the stream
         self.deque = deque(maxlen=deque_size)
 
@@ -89,9 +91,10 @@ class CameraWidget(QtWidgets.QWidget):
                     tic = time.perf_counter()
                     status, frame = self.capture.read()
                     if status:
-                        self.deque.append(frame)
-                        call_aie(frame, fps, aie)
+                        call_aie(frame, fps, self.aie)
                         fps = 1. / (time.perf_counter() - tic)
+                        self.deque.append(frame)
+
                     else:
                         self.capture.release()
                         self.online = False
@@ -152,7 +155,7 @@ def exit_application():
 
 
 if __name__ == '__main__':
-    aie = AIE()
+    # aie = AIE()
 
     # Create main application window
     app = QtWidgets.QApplication([])
@@ -177,31 +180,21 @@ if __name__ == '__main__':
     password = 'Your camera password!'
 
     # Stream links
-    camera0 = 'rtsp://admin:camera@192.168.1.234:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
+    # camera0 = 'rtsp://admin:camera@192.168.1.234:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
     camera1 = 'rtsp://admin:camera@192.168.1.241:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
-    camera2 = 'rtsp://admin:camera@192.168.1.242:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
-    # camera3 = 'rtsp://{}:{}@192.168.1.40:554/cam/realmonitor?channel=1&subtype=0'.format(username, password)
-    # camera4 = 'rtsp://{}:{}@192.168.1.44:554/cam/realmonitor?channel=1&subtype=0'.format(username, password)
-    # camera5 = 'rtsp://{}:{}@192.168.1.42:554/cam/realmonitor?channel=1&subtype=0'.format(username, password)
-    # camera6 = 'rtsp://{}:{}@192.168.1.46:554/cam/realmonitor?channel=1&subtype=0'.format(username, password)
-    # camera7 = 'rtsp://{}:{}@192.168.1.41:554/cam/realmonitor?channel=1&subtype=0'.format(username, password)
+    # camera2 = 'rtsp://admin:camera@192.168.1.242:554/h264Preview_01_main'.format(CAMERA_USER, CAMERA_PSWD)
 
     # Create camera widgets
     print('Creating Camera Widgets...')
-    zero = CameraWidget(screen_width // 3, screen_height // 3, camera0)
+    # zero = CameraWidget(screen_width // 3, screen_height // 3, camera0)
     one = CameraWidget(screen_width // 3, screen_height // 3, camera1)
-    two = CameraWidget(screen_width // 3, screen_height // 3, camera2)
-    # three = CameraWidget(screen_width//3, screen_height//3, camera3)
-    # four = CameraWidget(screen_width//3, screen_height//3, camera4)
-    # five = CameraWidget(screen_width//3, screen_height//3, camera5)
-    # six = CameraWidget(screen_width//3, screen_height//3, camera6)
-    # seven = CameraWidget(screen_width//3, screen_height//3, camera7)
+    # two = CameraWidget(screen_width // 3, screen_height // 3, camera2)
 
     # Add widgets to layout
     print('Adding widgets to layout...')
-    ml.addWidget(zero.get_video_frame(), 0, 0, 1, 1)
+    # ml.addWidget(zero.get_video_frame(), 0, 0, 1, 1)
     ml.addWidget(one.get_video_frame(), 0, 1, 1, 1)
-    ml.addWidget(two.get_video_frame(), 0, 2, 1, 1)
+    # ml.addWidget(two.get_video_frame(), 0, 2, 1, 1)
     # ml.addWidget(three.get_video_frame(),1,0,1,1)
     # ml.addWidget(four.get_video_frame(),1,1,1,1)
     # ml.addWidget(five.get_video_frame(),1,2,1,1)
