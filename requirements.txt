@@ -3,3 +3,8 @@ numpy
 scipy
 tqdm
 opencv-contrib-python
+"reaolinkapi[streaming]"
+adabelief-tf
+opencv-contrib-python
+tensorflow
+matplotlib

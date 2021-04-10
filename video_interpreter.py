@@ -2,6 +2,11 @@ import numpy as np
 import cv2
 import time
 from time import monotonic as chrono
+from reolinkapi import Camera
+
+import threading
+
+from constants import *
 
 
 # code to open the webcam
@@ -81,5 +86,97 @@ def extract_frames(path_out, frame_rate=1, time_limit=10):
         count += frame_rate
 
 
+def non_blocking(IP, name):
+    print("calling non-blocking")
+
+    def inner_callback(img):
+        cv2.imshow(name, maintain_aspect_ratio_resize(img, width=600))
+        print("got the image non-blocking")
+        key = cv2.waitKey(1)
+        if key == ord('q'):
+            cv2.destroyAllWindows()
+            exit(1)
+
+    c = Camera(IP, CAMERA_USER, CAMERA_PSWD)
+    # t in this case is a thread
+    t = c.open_video_stream(callback=inner_callback)
+
+    print(t.is_alive())
+    while True:
+        if not t.is_alive():
+            print("continuing")
+            break
+        # stop the stream
+        # client.stop_stream()
+
+
+# Reolink api
+def blocking(IP, name):
+    c = Camera(IP, CAMERA_USER, CAMERA_PSWD)
+    # stream in this case is a generator returning an image (in mat format)
+    stream = c.open_video_stream()
+
+    # using next()
+    # while True:
+    #     img = next(stream)
+    #     cv2.imshow("name", maintain_aspect_ratio_resize(img, width=600))
+    #     print("got the image blocking")
+    #     key = cv2.waitKey(1)
+    #     if key == ord('q'):
+    #         cv2.destroyAllWindows()
+    #         exit(1)
+
+    # or using a for loop
+    for img in stream:
+        cv2.imshow(name, maintain_aspect_ratio_resize(img, width=600))
+        # cv2.imshow("name", img)
+        # print("got the image blocking")
+        key = cv2.waitKey(1)
+        if key == ord('q'):
+            cv2.destroyAllWindows()
+            exit(1)
+
+
+# Resizes a image and maintains aspect ratio
+def maintain_aspect_ratio_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
+    # Grab the image size and initialize dimensions
+    dim = None
+    (h, w) = image.shape[:2]
+
+    # Return original image if no need to resize
+    # if width is None and height is None:
+    #     return image
+
+    # We are resizing height if width is none
+    if width is None:
+        if height is None:
+            return image
+        # Calculate the ratio of the height and construct the dimensions
+        r = height / float(h)
+        dim = (int(w * r), height)
+    # We are resizing width if height is none
+    # else:
+    # Calculate the ratio of the 0idth and construct the dimensions
+    r = width / float(w)
+    dim = (width, int(h * r))
+
+    # Return the resized image
+    return cv2.resize(image, dim, interpolation=inter)
+
+
 if __name__ == '__main__':
-    pass
+    # blocking(CAMERA_IP)
+    # blocking(CAMERA_IP_2)
+
+    threads = []
+
+    for i in range(3):
+        t = threading.Thread(target=non_blocking(CAMERA_IP_LST[i], "cam" + str(i+1)))
+        t.daemon = True
+        threads.append(t)
+
+    for i in range(3):
+        threads[i].start()
+
+    # for i in range(3):
+    #     threads[i].join()

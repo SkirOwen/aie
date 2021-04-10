@@ -1,5 +1,14 @@
 import os
 
+CAMERA_IP_1 = "192.168.1.234"
+CAMERA_IP_2 = "192.168.1.241"
+CAMERA_IP_3 = "192.168.1.242"
+
+CAMERA_IP_LST = [CAMERA_IP_1, CAMERA_IP_2, CAMERA_IP_3]
+
+CAMERA_USER = "admin"
+CAMERA_PSWD = "camera"
+
 DATASET_DIR = "./dataset"
 
 TRAINING_DIR = os.path.join(DATASET_DIR, "training")
