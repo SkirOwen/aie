@@ -25,7 +25,7 @@ os.environ['TF_GPU_THREAD_MODE'] = 'gpu_private'
 
 # create keypoint estimator model
 input_size = 96
-sota = keras.applications.MobileNetV3Large(
+sota = keras.applications.MobileNetV2(
     input_shape=(input_size, input_size, 3),
     include_top=False,
     pooling='avg',
@@ -38,7 +38,7 @@ model_keypoint_estimator = keras.Model(sota.input, regression, name=NAME)
 
 class MaskedMSE(keras.losses.Loss):
     def call(self, y_true, y_pred):
-        mask = tf.broadcast_to(tf.expand_dims(y_true[:, 2::3], -1), (tf.shape(y_true)[0], 13, 2))
+        mask = tf.expand_dims(y_true[:, 2::3], -1)
         y_true = tf.reshape(y_true, (-1, 13, 3))[:, :, :2] * mask
         y_pred = tf.reshape(y_pred, (-1, 13, 2)) * mask
         return tf.reduce_mean(keras.losses.MSE(y_true, y_pred))
@@ -76,6 +76,7 @@ def preprocess_data(sample):
     image = tf.io.read_file(sample[0])
     image = tf.io.decode_image(image, channels=3, expand_animations=False)
     image = tf.image.resize(image, [input_size, input_size], antialias=True)
+    image = keras.applications.mobilenet_v2.preprocess_input(image)
     label = tf.io.read_file(sample[1])
     label = tf.strings.split(label, sep=', ')
     label = tf.strings.to_number(label, out_type='float32')
@@ -89,14 +90,14 @@ def data_augmentation(image, label):
         label = tf.stack(([1.] * 13, label[1::3] * 2, label[2::3] * 2), axis=1) - tf.reshape(label, (13, 3))
         label = tf.reshape(
             tf.gather(label, [0] + [val for pair in zip(range(2, 13, 2), range(1, 12, 2)) for val in pair]), (39,))
-    image = tf.image.random_brightness(image, 32)
+    image = tf.image.random_brightness(image, 0.25)
     image = tf.image.random_hue(image, 0.1)
-    image = tf.clip_by_value(image, 0., 255.)
+    image = tf.clip_by_value(image, -1., 1.)
     return image, label
 
 
 # create regression dataset
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 training_data = training_list.map(
     preprocess_data,
     num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(len(training_list)).map(
@@ -107,7 +108,7 @@ validation_data = validation_list.map(
     num_parallel_calls=tf.data.AUTOTUNE).batch(BATCH_SIZE).cache().prefetch(tf.data.AUTOTUNE)
 
 # train keypoint estimator
-EPOCHS = 1000
+EPOCHS = 500
 weights_path = "./weights/keypoint_estimator/ckpt"
 model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
     filepath=weights_path,
@@ -120,7 +121,7 @@ history = model_keypoint_estimator.fit(
     epochs=EPOCHS,
     validation_data=validation_data,
     callbacks=[model_checkpoint_callback],
-    verbose=1)
+    verbose=2)
 
 # load best weights and evaluate on validation data
 model_keypoint_estimator.load_weights(weights_path)
@@ -136,11 +137,11 @@ model_keypoint_estimator.save(model_path, include_optimizer=False)
 fig = plt.figure()
 plt.plot(history.history['loss'], label='training')
 plt.plot(history.history['val_loss'], label='validation')
-plt.title('Total Loss')
+plt.title('Loss (Best: %.5f)' % results)
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
 plt.grid()
-results_save_path = "./keypoint_estimator_loss.png"
+results_save_path = "./keypoint_estimator_loss_"+str(BATCH_SIZE)+".png"
 fig.savefig(results_save_path, dpi=192)
 print("Results saved to", results_save_path)
