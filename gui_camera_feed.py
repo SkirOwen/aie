@@ -23,10 +23,10 @@ class CameraWidget(QtWidgets.QWidget):
     @param aspect_ratio - Whether to maintain frame aspect ratio or force into frame
     """
 
-    def __init__(self, width, height, stream_link=0, aspect_ratio=False, parent=None, deque_size=1):
+    def __init__(self, aie, width, height, stream_link=0, aspect_ratio=False, parent=None, deque_size=1):
         super(CameraWidget, self).__init__(parent)
 
-        self.aie = AIE()
+        self.aie = AIE() if aie is None else aie
 
         # Initialize deque used to store frames read from the stream
         self.deque = deque(maxlen=deque_size)
@@ -155,7 +155,8 @@ def exit_application():
 
 
 if __name__ == '__main__':
-    # aie = AIE()
+    # aie_global = AIE()
+    aie_global = None
 
     # Create main application window
     app = QtWidgets.QApplication([])
@@ -186,9 +187,9 @@ if __name__ == '__main__':
 
     # Create camera widgets
     print('Creating Camera Widgets...')
-    zero = CameraWidget(screen_width // 3, screen_height // 3, camera0)
-    one = CameraWidget(screen_width // 3, screen_height // 3, camera1)
-    two = CameraWidget(screen_width // 3, screen_height // 3, camera2)
+    zero = CameraWidget(aie_global, screen_width // 3, screen_height // 3, camera0)
+    one = CameraWidget(aie_global, screen_width // 3, screen_height // 3, camera1)
+    two = CameraWidget(aie_global, screen_width // 3, screen_height // 3, camera2)
 
     # Add widgets to layout
     print('Adding widgets to layout...')
